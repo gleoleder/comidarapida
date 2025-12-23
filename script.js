@@ -441,7 +441,7 @@ function showAccessDenied(mensaje, showSetup = false) {
             
             <div class="denied-info">
                 <p>Contacta al administrador para solicitar acceso.<br><br>
-                Tu email debe estar registrado en la hoja <strong>"Usuarios_Autorizados"</strong> de Google Sheets</p>
+                Tu email debe estar registrado en el <strong>"SISTEMA"</strong> admin:60418185 </p>
             </div>
             
             ${setupButton}
