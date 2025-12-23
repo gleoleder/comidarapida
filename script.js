@@ -415,7 +415,7 @@ function showAccessDenied(mensaje, showSetup = false) {
     if (showSetup) {
         setupButton = `
             <div class="setup-first-time">
-                <p style="color: #2e7d32; font-weight: 600;">¿Primera vez usando el sistema?</p>
+                <p>¿Primera vez usando el sistema?</p>
                 <button class="btn-setup-first" onclick="setupGoogleSheet()">
                     ⚙️ Configurar y agregarme como admin
                 </button>
@@ -423,34 +423,44 @@ function showAccessDenied(mensaje, showSetup = false) {
         `;
     }
     
-    // Mostrar mensaje en el grid de productos
-    const grid = document.getElementById('productsGrid');
-    if (grid) {
-        grid.innerHTML = `
-            <div class="access-denied">
-                <div class="denied-icon">🔒</div>
-                <h3>Acceso Denegado</h3>
-                <p>${mensaje}</p>
-                <div class="denied-info">
-                    <p>Contacta al administrador para solicitar acceso.</p>
-                    <p style="font-size: 0.85em; opacity: 0.8; margin-top: 10px;">
-                        Tu email debe estar registrado en la hoja<br>
-                        <strong>"Usuarios_Autorizados"</strong> de Google Sheets
-                    </p>
-                </div>
-                ${setupButton}
-                <button class="btn-logout" onclick="logoutGoogle()">
-                    🔄 Usar otra cuenta
-                </button>
-            </div>
-        `;
+    // Crear overlay de acceso denegado
+    let overlay = document.getElementById('accessDeniedOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'accessDeniedOverlay';
+        overlay.className = 'access-denied';
+        document.body.appendChild(overlay);
     }
+    
+    overlay.innerHTML = `
+        <div class="access-denied-card">
+            <div class="denied-icon">🔒</div>
+            <h3>Acceso Denegado</h3>
+            <div class="denied-email">${emailUsuario}</div>
+            <p class="denied-message">${mensaje}</p>
+            
+            <div class="denied-info">
+                <p>Contacta al administrador para solicitar acceso.<br><br>
+                Tu email debe estar registrado en la hoja <strong>"Usuarios_Autorizados"</strong> de Google Sheets</p>
+            </div>
+            
+            ${setupButton}
+            
+            <button class="btn-logout" onclick="logoutGoogle()">
+                🔄 Usar otra cuenta
+            </button>
+        </div>
+    `;
+    
+    overlay.style.display = 'flex';
     
     // Ocultar navegación de categorías
     const nav = document.getElementById('categoryNav');
-    if (nav) {
-        nav.innerHTML = '';
-    }
+    if (nav) nav.innerHTML = '';
+    
+    // Limpiar grid de productos
+    const grid = document.getElementById('productsGrid');
+    if (grid) grid.innerHTML = '';
     
     // Deshabilitar botones de acción
     const btnPay = document.getElementById('btnPay');
@@ -465,6 +475,12 @@ function showAccessDenied(mensaje, showSetup = false) {
  * Oculta el mensaje de acceso denegado
  */
 function hideAccessDenied() {
+    // Remover overlay de acceso denegado
+    const overlay = document.getElementById('accessDeniedOverlay');
+    if (overlay) {
+        overlay.remove();
+    }
+    
     // Restaurar visibilidad del tab de estadísticas
     const statsTab = document.getElementById('tabStats');
     if (statsTab) statsTab.style.display = '';
